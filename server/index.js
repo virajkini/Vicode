@@ -13,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const PORT = 4002;
+const PORT = process.env.PORT || 4002;
 const execAsync = promisify(exec);
 
 app.use(cors());
@@ -27,7 +27,9 @@ if (!GOOGLE_CLIENT_ID) {
 }
 
 // Get the practise root folder path (per-user folders live under here)
-const PRACTISE_ROOT = join(__dirname, '..', 'practise');
+const PRACTISE_ROOT = process.env.PRACTISE_ROOT
+  ? resolve(process.env.PRACTISE_ROOT)
+  : join(__dirname, '..', 'practise');
 
 // Auth endpoints
 app.post('/api/auth/google', async (req, res) => {
@@ -185,6 +187,14 @@ app.post('/api/execute', requireAuth, async (req, res) => {
     });
   }
 });
+
+const DIST_DIR = join(__dirname, '..', 'dist');
+if (existsSync(DIST_DIR)) {
+  app.use(express.static(DIST_DIR));
+  app.get('*', (req, res) => {
+    res.sendFile(join(DIST_DIR, 'index.html'));
+  });
+}
 
 // Helper function to get all files recursively
 async function getAllFiles(dir, fileList = []) {
