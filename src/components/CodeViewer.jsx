@@ -2,7 +2,7 @@ import React from 'react';
 import Editor from '@monaco-editor/react';
 import './CodeViewer.css';
 
-function CodeViewer({ content, filename, onChange, onSave }) {
+function CodeViewer({ content, filename, onChange, onSave, onExecute, isExecuting, hasFile }) {
   const getLanguage = () => {
     if (!filename) return 'javascript';
     const ext = filename.split('.').pop().toLowerCase();
@@ -43,7 +43,17 @@ function CodeViewer({ content, filename, onChange, onSave }) {
   return (
     <div className="code-viewer">
       <div className="code-header">
-        <span className="code-filename">{filename || 'No file selected'}</span>
+        <div className="code-header-left">
+          <span className="code-filename">{filename || 'No file selected'}</span>
+          <button
+            className="execute-button-top"
+            onClick={onExecute}
+            disabled={!hasFile || isExecuting}
+            title="Execute file"
+          >
+            {isExecuting ? 'Executing...' : 'Execute'}
+          </button>
+        </div>
         {filename && (
           <button 
             className="save-button" 

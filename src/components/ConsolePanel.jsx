@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import './ConsolePanel.css';
 
-function ConsolePanel({ logs, onExecute, isExecuting, hasFile }) {
+function ConsolePanel({ logs }) {
   const consoleRef = useRef(null);
 
   useEffect(() => {
@@ -14,13 +14,6 @@ function ConsolePanel({ logs, onExecute, isExecuting, hasFile }) {
     <div className="console-panel">
       <div className="console-header">
         <span>Console</span>
-        <button
-          className="execute-button"
-          onClick={onExecute}
-          disabled={!hasFile || isExecuting}
-        >
-          {isExecuting ? 'Executing...' : 'Execute'}
-        </button>
       </div>
       <div className="console-output" ref={consoleRef}>
         {logs.length === 0 ? (
@@ -41,7 +34,5 @@ function ConsolePanel({ logs, onExecute, isExecuting, hasFile }) {
 }
 
 export default ConsolePanel;
-
-
 
 

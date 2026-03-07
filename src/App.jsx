@@ -3,10 +3,15 @@ import FileSelector from './components/FileSelector';
 import CodeViewer from './components/CodeViewer';
 import ConsolePanel from './components/ConsolePanel';
 import CreateFileModal from './components/CreateFileModal';
+import Login from './components/Login';
 import './App.css';
 
 function App() {
   const AUTOSAVE_DELAY_MS = 2000;
+  const [user, setUser] = useState(null);
+  const [authToken, setAuthToken] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
+  const [authError, setAuthError] = useState('');
   const [files, setFiles] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileContent, setFileContent] = useState('');
@@ -16,12 +21,99 @@ function App() {
   const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
-    fetchFiles();
+    const token = localStorage.getItem('google_id_token');
+    if (!token) {
+      setAuthReady(true);
+      return;
+    }
+
+    (async () => {
+      try {
+        const response = await fetch('/api/auth/me', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Session expired');
+        }
+
+        const data = await response.json();
+        setAuthToken(token);
+        setUser(data.user || null);
+      } catch (error) {
+        localStorage.removeItem('google_id_token');
+        setAuthToken(null);
+        setUser(null);
+      } finally {
+        setAuthReady(true);
+      }
+    })();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchFiles();
+    }
+  }, [user]);
+
+  const authFetch = async (url, options = {}) => {
+    const headers = {
+      ...(options.headers || {}),
+    };
+
+    const token = authToken || localStorage.getItem('google_id_token');
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url, { ...options, headers });
+    if (response.status === 401) {
+      handleLogout();
+      throw new Error('Session expired. Please sign in again.');
+    }
+    return response;
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('google_id_token');
+    setAuthToken(null);
+    setUser(null);
+    setFiles([]);
+    setSelectedFile(null);
+    setFileContent('');
+    setConsoleLogs([]);
+  };
+
+  const handleGoogleLogin = async (idToken) => {
+    try {
+      setAuthError('');
+      const response = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Login failed' }));
+        throw new Error(errorData.error || 'Login failed');
+      }
+
+      const data = await response.json();
+      setAuthToken(idToken);
+      localStorage.setItem('google_id_token', idToken);
+      setUser(data.user);
+    } catch (error) {
+      setAuthError(error.message || 'Login failed');
+    }
+  };
 
   const fetchFiles = async () => {
     try {
-      const response = await fetch('/api/files');
+      const response = await authFetch('/api/files');
       const data = await response.json();
       setFiles(data.files || []);
     } catch (error) {
@@ -32,7 +124,7 @@ function App() {
   const handleFileSelect = async (filename) => {
     setSelectedFile(filename);
     try {
-      const response = await fetch(`/api/file/${encodeURIComponent(filename)}`);
+      const response = await authFetch(`/api/file/${encodeURIComponent(filename)}`);
       const data = await response.json();
       setFileContent(data.content || '');
       setIsDirty(false);
@@ -53,7 +145,7 @@ function App() {
     if (!selectedFile) return;
 
     try {
-      const response = await fetch(`/api/file/${encodeURIComponent(selectedFile)}`, {
+      const response = await authFetch(`/api/file/${encodeURIComponent(selectedFile)}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,7 +175,7 @@ function App() {
     setConsoleLogs([{ type: 'info', message: 'Executing...' }]);
 
     try {
-      const response = await fetch('/api/execute', {
+      const response = await authFetch('/api/execute', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -109,7 +201,7 @@ function App() {
 
   const handleCreateFile = async (filename) => {
     try {
-      const response = await fetch('/api/files', {
+      const response = await authFetch('/api/files', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -141,7 +233,7 @@ function App() {
 
   const handleDeleteFile = async (filename) => {
     try {
-      const response = await fetch(`/api/file/${encodeURIComponent(filename)}`, {
+      const response = await authFetch(`/api/file/${encodeURIComponent(filename)}`, {
         method: 'DELETE',
       });
 
@@ -176,6 +268,25 @@ function App() {
     return () => clearTimeout(timeoutId);
   }, [fileContent, selectedFile, isDirty]);
 
+  if (!authReady) {
+    return (
+      <div className="login-screen">
+        <div className="login-card">
+          <div className="login-title">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <Login
+        error={authError}
+        onLogin={handleGoogleLogin}
+      />
+    );
+  }
+
   return (
     <div className="app">
       <div className="header">
@@ -186,6 +297,20 @@ function App() {
           onCreateFile={() => setIsModalOpen(true)}
           onDeleteFile={handleDeleteFile}
         />
+        <div className="user-chip">
+          {user.picture ? (
+            <img src={user.picture} alt={user.name} />
+          ) : (
+            <div className="user-avatar-fallback">
+              {user.name?.slice(0, 1)?.toUpperCase() || '?'}
+            </div>
+          )}
+          <div className="user-meta">
+            <div className="user-name">{user.name}</div>
+            <div className="user-email">{user.email}</div>
+          </div>
+          <button className="logout-button" onClick={handleLogout}>Logout</button>
+        </div>
       </div>
       <CreateFileModal
         isOpen={isModalOpen}
@@ -199,14 +324,14 @@ function App() {
             filename={selectedFile}
             onChange={handleContentChange}
             onSave={handleSave}
+            onExecute={handleExecute}
+            isExecuting={isExecuting}
+            hasFile={!!selectedFile}
           />
         </div>
         <div className="right-panel">
           <ConsolePanel
             logs={consoleLogs}
-            onExecute={handleExecute}
-            isExecuting={isExecuting}
-            hasFile={!!selectedFile}
           />
         </div>
       </div>

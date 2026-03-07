@@ -9,6 +9,9 @@
   padding: 10px 20px;
   background-color: #252526;
   border-bottom: 1px solid #3e3e42;
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .main-content {
@@ -32,3 +35,99 @@
   background-color: #252526;
 }
 
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top, #2f2f35, #1b1b1f 55%);
+  color: #f5f5f5;
+  padding: 20px;
+}
+
+.login-card {
+  background: #232329;
+  border: 1px solid #3a3a42;
+  border-radius: 16px;
+  padding: 32px;
+  width: min(420px, 100%);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+  text-align: center;
+}
+
+.login-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.login-subtitle {
+  color: #c8c8d0;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.login-button {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.login-note {
+  font-size: 12px;
+  color: #9b9bb0;
+}
+
+.login-error {
+  margin-top: 12px;
+  color: #ff8c8c;
+  font-size: 13px;
+}
+
+.user-chip {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #f0f0f0;
+}
+
+.user-chip img,
+.user-avatar-fallback {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #3a3a42;
+  object-fit: cover;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+}
+
+.user-meta {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+}
+
+.user-name {
+  font-weight: 600;
+}
+
+.user-email {
+  color: #b4b4c4;
+}
+
+.logout-button {
+  margin-left: 8px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #3e3e42;
+  background: #2b2b32;
+  color: #f0f0f0;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background: #33333a;
+}

@@ -12,7 +12,8 @@
 .dropdown-container {
   position: relative;
   flex: 1;
-  max-width: 600px;
+  max-width: 760px;
+  min-width: 360px;
 }
 
 .dropdown-trigger {
@@ -62,6 +63,7 @@
   color: #cccccc;
   font-size: 14px;
   outline: none;
+  width: 100%;
 }
 
 .search-input:focus {

@@ -17,8 +17,19 @@
   align-items: center;
 }
 
+.code-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
 .code-filename {
   color: #cccccc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .save-button {
@@ -35,6 +46,28 @@
 
 .save-button:hover {
   background-color: #1177bb;
+}
+
+.execute-button-top {
+  padding: 6px 16px;
+  min-width: 200px;
+  background-color: #1f7a4d;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.execute-button-top:hover:not(:disabled) {
+  background-color: #238a57;
+}
+
+.execute-button-top:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .code-content {
