@@ -21,6 +21,8 @@ app.use(express.json());
 
 loadEnvFile();
 
+logEnvStatus();
+
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 if (!GOOGLE_CLIENT_ID) {
   console.warn('GOOGLE_CLIENT_ID is not set. Google login will fail until it is configured.');
@@ -238,6 +240,24 @@ function loadEnvFile() {
     const value = line.slice(eqIndex + 1).trim();
     if (key && !(key in process.env)) {
       process.env[key] = value;
+    }
+  }
+}
+
+function logEnvStatus() {
+  const keys = [
+    'GOOGLE_CLIENT_ID',
+    'VITE_GOOGLE_CLIENT_ID',
+    'PRACTISE_ROOT',
+    'PORT',
+    'RAILWAY_PUBLIC_DOMAIN',
+  ];
+  for (const key of keys) {
+    const value = process.env[key];
+    if (value) {
+      console.log(`[env] ${key} is set (length=${String(value).length})`);
+    } else {
+      console.log(`[env] ${key} is NOT set`);
     }
   }
 }
