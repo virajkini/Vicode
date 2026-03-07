@@ -1,0 +1,150 @@
+.file-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-selector-label {
+  color: #cccccc;
+  font-size: 14px;
+}
+
+.dropdown-container {
+  position: relative;
+  flex: 1;
+  max-width: 600px;
+}
+
+.dropdown-trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: #3c3c3c;
+  border: 1px solid #3e3e42;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #cccccc;
+  font-size: 14px;
+}
+
+.dropdown-trigger:hover {
+  background-color: #454545;
+}
+
+.dropdown-arrow {
+  margin-left: 10px;
+  font-size: 10px;
+  color: #858585;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background-color: #252526;
+  border: 1px solid #3e3e42;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-input {
+  padding: 8px 12px;
+  background-color: #3c3c3c;
+  border: none;
+  border-bottom: 1px solid #3e3e42;
+  color: #cccccc;
+  font-size: 14px;
+  outline: none;
+}
+
+.search-input:focus {
+  background-color: #454545;
+}
+
+.file-list {
+  overflow-y: auto;
+  max-height: 350px;
+}
+
+.file-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: #cccccc;
+  font-size: 14px;
+  border-bottom: 1px solid #2d2d30;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-item:hover {
+  background-color: #2a2d2e;
+}
+
+.file-item.selected {
+  background-color: #094771;
+  color: #ffffff;
+}
+
+.file-item:last-child {
+  border-bottom: none;
+}
+
+.file-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.delete-file-button {
+  background: transparent;
+  border: 1px solid #3e3e42;
+  color: #d16969;
+  border-radius: 3px;
+  padding: 2px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.delete-file-button:hover {
+  background-color: #3a1f1f;
+  border-color: #6f2b2b;
+}
+
+.no-files {
+  padding: 12px;
+  text-align: center;
+  color: #858585;
+  font-size: 14px;
+}
+
+.add-file-button {
+  width: 32px;
+  height: 32px;
+  background-color: #0e639c;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.add-file-button:hover {
+  background-color: #1177bb;
+}

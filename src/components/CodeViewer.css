@@ -1,0 +1,53 @@
+.code-viewer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #1e1e1e;
+}
+
+.code-header {
+  padding: 10px 15px;
+  background-color: #252526;
+  border-bottom: 1px solid #3e3e42;
+  color: #cccccc;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.code-filename {
+  color: #cccccc;
+}
+
+.save-button {
+  padding: 4px 12px;
+  background-color: #0e639c;
+  color: #ffffff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.save-button:hover {
+  background-color: #1177bb;
+}
+
+.code-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.code-placeholder {
+  padding: 40px 20px;
+  color: #858585;
+  font-style: italic;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
