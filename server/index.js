@@ -31,7 +31,9 @@ if (!GOOGLE_CLIENT_ID) {
 // Get the practise root folder path (per-user folders live under here)
 const PRACTISE_ROOT = process.env.PRACTISE_ROOT
   ? resolve(process.env.PRACTISE_ROOT)
-  : join(__dirname, '..', 'practise');
+  : process.env.VERCEL
+    ? '/tmp/practise'
+    : join(__dirname, '..', 'practise');
 
 // Auth endpoints
 app.post('/api/auth/google', async (req, res) => {
@@ -190,12 +192,14 @@ app.post('/api/execute', requireAuth, async (req, res) => {
   }
 });
 
-const DIST_DIR = join(__dirname, '..', 'dist');
-if (existsSync(DIST_DIR)) {
-  app.use(express.static(DIST_DIR));
-  app.get('*', (req, res) => {
-    res.sendFile(join(DIST_DIR, 'index.html'));
-  });
+if (!process.env.VERCEL) {
+  const DIST_DIR = join(__dirname, '..', 'dist');
+  if (existsSync(DIST_DIR)) {
+    app.use(express.static(DIST_DIR));
+    app.get('*', (req, res) => {
+      res.sendFile(join(DIST_DIR, 'index.html'));
+    });
+  }
 }
 
 // Helper function to get all files recursively
@@ -250,7 +254,7 @@ function logEnvStatus() {
     'VITE_GOOGLE_CLIENT_ID',
     'PRACTISE_ROOT',
     'PORT',
-    'RAILWAY_PUBLIC_DOMAIN',
+    'VERCEL',
   ];
   for (const key of keys) {
     const value = process.env[key];
@@ -349,6 +353,10 @@ async function requireAuth(req, res, next) {
   }
 }
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+export default app;
+
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
