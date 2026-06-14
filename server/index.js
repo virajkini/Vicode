@@ -276,12 +276,18 @@ async function verifyGoogleIdToken(idToken) {
       });
       res.on('end', () => {
         if (res.statusCode !== 200) {
-          return reject(new Error('Invalid Google token'));
+          let googleError = 'Invalid Google token';
+          try {
+            const body = JSON.parse(data);
+            if (body.error_description) googleError = `Google token error: ${body.error_description}`;
+            else if (body.error) googleError = `Google token error: ${body.error}`;
+          } catch (_) {}
+          return reject(new Error(`${googleError} (HTTP ${res.statusCode})`));
         }
         try {
           const payload = JSON.parse(data);
           if (payload.aud !== GOOGLE_CLIENT_ID) {
-            return reject(new Error('Token audience mismatch'));
+            return reject(new Error(`Token audience mismatch: expected ${GOOGLE_CLIENT_ID}, got ${payload.aud}`));
           }
           if (payload.email_verified !== 'true' && payload.email_verified !== true) {
             return reject(new Error('Google email is not verified'));
@@ -291,7 +297,7 @@ async function verifyGoogleIdToken(idToken) {
           reject(error);
         }
       });
-    }).on('error', reject);
+    }).on('error', (err) => reject(new Error(`Failed to reach Google token endpoint: ${err.message}`)));
   });
 }
 

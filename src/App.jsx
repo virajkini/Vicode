@@ -100,8 +100,8 @@ function App() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Login failed' }));
-        throw new Error(errorData.error || 'Login failed');
+        const errorData = await response.json().catch(() => ({ error: `Login failed (HTTP ${response.status})` }));
+        throw new Error(errorData.error || `Login failed (HTTP ${response.status})`);
       }
 
       const data = await response.json();
