@@ -70,7 +70,7 @@ app.get('/api/file/:filename(*)', requireAuth, async (req, res) => {
     const { blobs } = await list({ prefix: pathname, limit: 10, token: process.env.BLOB_READ_WRITE_TOKEN });
     const blob = blobs.find(b => b.pathname === pathname);
     if (!blob) return res.status(404).json({ error: 'File not found' });
-    const response = await fetch(blob.url);
+    const response = await fetch(blob.downloadUrl);
     const content = await response.text();
     res.json({ content, filename });
   } catch (error) {
@@ -86,7 +86,7 @@ app.post('/api/file/:filename(*)', requireAuth, async (req, res) => {
     const { content } = req.body;
     const pathname = getUserPrefix(req.user.email) + filename;
     await put(pathname, Buffer.from(content ?? ''), {
-      access: 'public',
+      access: 'private',
       contentType: 'text/plain',
       addRandomSuffix: false,
       token: process.env.BLOB_READ_WRITE_TOKEN,
@@ -128,7 +128,7 @@ app.post('/api/files', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'File already exists' });
     }
     await put(pathname, Buffer.from(''), {
-      access: 'public',
+      access: 'private',
       contentType: 'text/plain',
       addRandomSuffix: false,
       token: process.env.BLOB_READ_WRITE_TOKEN,
@@ -152,7 +152,7 @@ app.post('/api/execute', requireAuth, async (req, res) => {
     const blob = blobs.find(b => b.pathname === pathname);
     if (!blob) return res.status(404).json({ error: 'File not found' });
 
-    const response = await fetch(blob.url);
+    const response = await fetch(blob.downloadUrl);
     const content = await response.text();
 
     // Write to /tmp for execution (only /tmp is writable on serverless)
