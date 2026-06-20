@@ -85,7 +85,7 @@ app.post('/api/file/:filename(*)', requireAuth, async (req, res) => {
     const filename = validateFilename(req.params.filename);
     const { content } = req.body;
     const pathname = getUserPrefix(req.user.email) + filename;
-    await put(pathname, content ?? '', {
+    await put(pathname, Buffer.from(content ?? ''), {
       access: 'public',
       contentType: 'text/plain',
       addRandomSuffix: false,
@@ -127,7 +127,7 @@ app.post('/api/files', requireAuth, async (req, res) => {
     if (blobs.find(b => b.pathname === pathname)) {
       return res.status(400).json({ error: 'File already exists' });
     }
-    await put(pathname, '', {
+    await put(pathname, Buffer.from(''), {
       access: 'public',
       contentType: 'text/plain',
       addRandomSuffix: false,
