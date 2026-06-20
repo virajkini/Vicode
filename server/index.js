@@ -90,6 +90,7 @@ app.post('/api/file/:filename(*)', requireAuth, async (req, res) => {
       contentType: 'text/plain',
       addRandomSuffix: false,
       allowOverwrite: true,
+      cacheControlMaxAge: 0,
       token: process.env.BLOB_READ_WRITE_TOKEN,
     });
     res.json({ success: true, message: 'File saved successfully' });
@@ -132,6 +133,7 @@ app.post('/api/files', requireAuth, async (req, res) => {
       access: 'private',
       contentType: 'text/plain',
       addRandomSuffix: false,
+      cacheControlMaxAge: 0,
       token: process.env.BLOB_READ_WRITE_TOKEN,
     });
     res.json({ success: true, message: 'File created successfully', filename: validFilename });
