@@ -11,9 +11,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
     "@monaco-editor/react": "^4.6.0",
+    "@vercel/blob": "^2.4.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
     "monaco-editor": "^0.55.1"
   },
   "optionalDependencies": {
@@ -21,9 +22,9 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.0.8",
+    "concurrently": "^8.2.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "concurrently": "^8.2.2"
+    "vite": "^5.0.8"
   }
 }
