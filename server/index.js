@@ -70,7 +70,9 @@ app.get('/api/file/:filename(*)', requireAuth, async (req, res) => {
     const { blobs } = await list({ prefix: pathname, limit: 10, token: process.env.BLOB_READ_WRITE_TOKEN });
     const blob = blobs.find(b => b.pathname === pathname);
     if (!blob) return res.status(404).json({ error: 'File not found' });
-    const response = await fetch(blob.downloadUrl);
+    const response = await fetch(blob.downloadUrl, {
+      headers: { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` },
+    });
     const content = await response.text();
     res.json({ content, filename });
   } catch (error) {
@@ -155,7 +157,9 @@ app.post('/api/execute', requireAuth, async (req, res) => {
     const blob = blobs.find(b => b.pathname === pathname);
     if (!blob) return res.status(404).json({ error: 'File not found' });
 
-    const response = await fetch(blob.downloadUrl);
+    const response = await fetch(blob.downloadUrl, {
+      headers: { Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}` },
+    });
     const content = await response.text();
 
     // Write to /tmp for execution (only /tmp is writable on serverless)
