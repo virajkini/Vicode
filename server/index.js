@@ -89,6 +89,7 @@ app.post('/api/file/:filename(*)', requireAuth, async (req, res) => {
       access: 'private',
       contentType: 'text/plain',
       addRandomSuffix: false,
+      allowOverwrite: true,
       token: process.env.BLOB_READ_WRITE_TOKEN,
     });
     res.json({ success: true, message: 'File saved successfully' });
